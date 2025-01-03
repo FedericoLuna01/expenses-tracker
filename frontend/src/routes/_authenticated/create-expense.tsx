@@ -5,9 +5,9 @@ import { Label } from '@/components/ui/label'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
 import { useForm } from '@tanstack/react-form'
-import { api } from "@/lib/api"
+import { api } from '@/lib/api'
 
-export const Route = createFileRoute('/create-expense')({
+export const Route = createFileRoute('/_authenticated/create-expense')({
   component: CreateExpense,
 })
 
@@ -16,7 +16,7 @@ function CreateExpense() {
   const form = useForm({
     defaultValues: {
       title: '',
-      amount: 0,
+      amount: "0",
     },
     onSubmit: async ({ value }) => {
       await new Promise((r) => setTimeout(r, 2000))
@@ -32,11 +32,9 @@ function CreateExpense() {
 
   return (
     <div>
-      <Card className='max-w-2xl mx-auto mt-4'>
+      <Card className="max-w-2xl mx-auto mt-4">
         <CardHeader>
-          <CardTitle>
-            Create expense
-          </CardTitle>
+          <CardTitle>Create expense</CardTitle>
         </CardHeader>
         <CardContent>
           <form
@@ -45,7 +43,7 @@ function CreateExpense() {
               e.stopPropagation()
               form.handleSubmit()
             }}
-            className='space-y-4'
+            className="space-y-4"
           >
             <div>
               <form.Field
@@ -56,20 +54,20 @@ function CreateExpense() {
                       <Label htmlFor={field.name}>Title</Label>
                       <Input
                         id={field.name}
-                        placeholder='Some expense'
+                        placeholder="Some expense"
                         name={field.name}
                         value={field.state.value}
                         onBlur={field.handleBlur}
                         onChange={(e) => field.handleChange(e.target.value)}
                       />
-                      {field.state.meta.isTouched && field.state.meta.errors.length ? (
-                        <em>{field.state.meta.errors.join(", ")}</em>
+                      {field.state.meta.isTouched &&
+                        field.state.meta.errors.length ? (
+                        <em>{field.state.meta.errors.join(', ')}</em>
                       ) : null}
                     </>
                   )
                 }}
               />
-
             </div>
             <div>
               <form.Field
@@ -80,15 +78,18 @@ function CreateExpense() {
                       <Label htmlFor={field.name}>Title</Label>
                       <Input
                         id={field.name}
-                        placeholder='1000'
-                        type='number'
+                        placeholder="1000"
+                        type="number"
                         name={field.name}
                         value={field.state.value}
                         onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                        onChange={(e) =>
+                          field.handleChange(e.target.value)
+                        }
                       />
-                      {field.state.meta.isTouched && field.state.meta.errors.length ? (
-                        <em>{field.state.meta.errors.join(", ")}</em>
+                      {field.state.meta.isTouched &&
+                        field.state.meta.errors.length ? (
+                        <em>{field.state.meta.errors.join(', ')}</em>
                       ) : null}
                     </>
                   )

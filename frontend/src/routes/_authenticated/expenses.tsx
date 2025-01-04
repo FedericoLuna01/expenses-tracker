@@ -17,7 +17,6 @@ export const Route = createFileRoute('/_authenticated/expenses')({
 })
 
 async function getAllExpenses() {
-  await new Promise((r) => setTimeout(r, 2000))
   const res = await api.expenses.$get()
   if (!res.ok) {
     throw new Error('Server error')
@@ -43,28 +42,33 @@ function ExpensesPage() {
             <TableRow>
               <TableHead>Expense</TableHead>
               <TableHead>Amount</TableHead>
+              <TableHead>Date</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isPending
               ? Array(3)
-                  .fill(null)
-                  .map((_, i) => (
-                    <TableRow key={i}>
-                      <TableCell>
-                        <Skeleton className="h-4" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-4" />
-                      </TableCell>
-                    </TableRow>
-                  ))
-              : data?.expenses.map(({ amount, id, title }) => (
-                  <TableRow key={id}>
-                    <TableCell className="font-medium">{title}</TableCell>
-                    <TableCell>{amount}</TableCell>
+                .fill(null)
+                .map((_, i) => (
+                  <TableRow key={i}>
+                    <TableCell>
+                      <Skeleton className="h-4" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4" />
+                    </TableCell>
                   </TableRow>
-                ))}
+                ))
+              : data?.expenses.map(({ amount, id, title, date }) => (
+                <TableRow key={id}>
+                  <TableCell className="font-medium">{title}</TableCell>
+                  <TableCell>{amount}</TableCell>
+                  <TableCell>{date}</TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </div>

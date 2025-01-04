@@ -3,9 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { zodValidator } from '@tanstack/zod-form-adapter'
 
 import { useForm } from '@tanstack/react-form'
 import { api } from '@/lib/api'
+import { createExpenseSchema } from '@server/sharedTypes'
+import { Calendar } from '@/components/ui/calendar'
 
 export const Route = createFileRoute('/_authenticated/create-expense')({
   component: CreateExpense,
@@ -17,10 +20,9 @@ function CreateExpense() {
     defaultValues: {
       title: '',
       amount: "0",
+      date: (new Date()).toISOString(),
     },
     onSubmit: async ({ value }) => {
-      await new Promise((r) => setTimeout(r, 2000))
-
       const res = await api.expenses.$post({ json: value })
       if (!res.ok) {
         throw new Error('Server error')
@@ -28,6 +30,10 @@ function CreateExpense() {
 
       navigate({ to: '/expenses' })
     },
+    validatorAdapter: zodValidator(),
+    validators: {
+      onChange: createExpenseSchema,
+    }
   })
 
   return (
@@ -75,7 +81,7 @@ function CreateExpense() {
                 children={(field) => {
                   return (
                     <>
-                      <Label htmlFor={field.name}>Title</Label>
+                      <Label htmlFor={field.name}>Amount</Label>
                       <Input
                         id={field.name}
                         placeholder="1000"
@@ -92,6 +98,25 @@ function CreateExpense() {
                         <em>{field.state.meta.errors.join(', ')}</em>
                       ) : null}
                     </>
+                  )
+                }}
+              />
+            </div>
+            <div>
+              <form.Field
+                name="date"
+                children={(field) => {
+                  return (
+                    <div>
+                      <Calendar
+                        mode="single"
+                        selected={new Date(field.state.value)}
+                        onSelect={(date) => field.handleChange((date ?? new Date()).toISOString())}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
+                      />
+                    </div>
                   )
                 }}
               />

@@ -41,6 +41,7 @@ export const expensesRoute = new Hono()
         userId: user.id
       })
       .returning()
+      .then(res => res[0])
 
     return c.json(res)
   })

@@ -1,4 +1,4 @@
-import { api } from '@/lib/api'
+import { getAllExpensesQueryOptions, loadingCreateExpenseQueryOptions } from '@/lib/api'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import {
@@ -11,25 +11,16 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Button } from '@/components/ui/button'
+import { Trash } from 'lucide-react'
 
 export const Route = createFileRoute('/_authenticated/expenses')({
   component: ExpensesPage,
 })
 
-async function getAllExpenses() {
-  const res = await api.expenses.$get()
-  if (!res.ok) {
-    throw new Error('Server error')
-  }
-  const data = await res.json()
-  return data
-}
-
 function ExpensesPage() {
-  const { isPending, error, data } = useQuery({
-    queryKey: ['get-all-expenses'],
-    queryFn: getAllExpenses,
-  })
+  const { isPending, error, data } = useQuery(getAllExpensesQueryOptions)
+  const { data: loadingCreateExpense } = useQuery(loadingCreateExpenseQueryOptions)
 
   if (error) return <p>Error: {error.message}</p>
 
@@ -43,14 +34,36 @@ function ExpensesPage() {
               <TableHead>Expense</TableHead>
               <TableHead>Amount</TableHead>
               <TableHead>Date</TableHead>
+              <TableHead>Delete</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
+            {
+              loadingCreateExpense?.expense && (
+                <TableRow>
+                  <TableCell>
+                    <Skeleton className="h-4" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4" />
+                  </TableCell>
+                </TableRow>
+              )
+            }
             {isPending
               ? Array(3)
                 .fill(null)
                 .map((_, i) => (
                   <TableRow key={i}>
+                    <TableCell>
+                      <Skeleton className="h-4" />
+                    </TableCell>
                     <TableCell>
                       <Skeleton className="h-4" />
                     </TableCell>
@@ -67,11 +80,25 @@ function ExpensesPage() {
                   <TableCell className="font-medium">{title}</TableCell>
                   <TableCell>{amount}</TableCell>
                   <TableCell>{date}</TableCell>
+                  <TableCell>
+                    <DeleteExpenseButton id={id} />
+                  </TableCell>
                 </TableRow>
               ))}
           </TableBody>
         </Table>
       </div>
     </main>
+  )
+}
+
+function DeleteExpenseButton({ id }: { id: number }) {
+  return (
+    <Button
+      size="icon"
+      variant="destructive"
+    >
+      <Trash className='size-5' />
+    </Button>
   )
 }

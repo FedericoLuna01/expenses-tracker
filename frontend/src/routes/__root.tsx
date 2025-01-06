@@ -1,5 +1,6 @@
 import { type QueryClient } from '@tanstack/react-query'
 import { createRootRouteWithContext, Link, Outlet } from '@tanstack/react-router'
+import { Toaster } from 'sonner'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -26,7 +27,10 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         </Link>
       </div>
       <hr />
-      <Outlet />
+      <div>
+        <Outlet />
+      </div>
+      <Toaster />
     </>
   ),
 })
